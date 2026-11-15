@@ -1,1 +1,1 @@
-# Setas-San-Pelayo
+# San-Pelayo

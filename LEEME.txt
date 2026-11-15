@@ -1,0 +1,16 @@
+SETAS DE SAN PELAYO - VERSION WEB INSTALABLE (con ubicacion GPS y uso sin conexion)
+
+Por que esta version: Chrome y Brave no dejan usar la ubicacion en un archivo local (file://). Desde una direccion https si sale el aviso de permiso, y el permiso se recuerda.
+
+PASOS (GitHub Pages, gratis; se puede hacer desde el movil en modo "sitio de escritorio", o desde el ordenador)
+1. Crea una cuenta en github.com y pulsa "New repository". Nombre, por ejemplo: setas. Marcalo como Public. Crealo.
+2. En el repositorio: "Add file" > "Upload files". Sube los 5 archivos de esta carpeta: index.html, sw.js, manifest.webmanifest, icon-192.png e icon-512.png. Pulsa "Commit changes".
+3. Ve a Settings > Pages. En "Build and deployment" elige "Deploy from a branch", rama main y carpeta /(root). Guarda.
+4. Espera 1-2 minutos. Tu direccion sera https://TU_USUARIO.github.io/setas/
+5. Abrela en Brave o Chrome una vez CON internet. Para usarla en el monte sin cobertura: menu (tres puntos) > "Instalar aplicacion" o "Anadir a pantalla de inicio". Abrela desde el icono.
+
+IMPORTANTE
+- Tus hallazgos se guardan en el navegador de cada direccion. Los que tengas en la version archivo no pasan solos: en la version antigua pulsa Exportar (Mis hallazgos) y en la nueva pulsa Importar y pega el texto.
+- El repositorio es publico, pero tus hallazgos NO se suben: se quedan solo en tu movil.
+- Para actualizar la app, sube el nuevo index.html al repositorio (y cambia V="setas-v1" por V="setas-v2" en sw.js para que el movil descargue la version nueva).
+- Alternativas sin cuenta de GitHub: subir esta carpeta a Netlify Drop (app.netlify.com/drop) o a Cloudflare Pages. Misma idea: una direccion https.

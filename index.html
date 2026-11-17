@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#3f6b3a"><link rel="apple-touch-icon" href="icon-192.png">
 <meta name="robots" content="noindex,nofollow"><title>Setas de San Pelayo (Burgos)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;600&display=swap">
 <style>
@@ -514,5 +515,6 @@ var u=utmf(c[0],c[1]),x=(u[0]-UX)/5,y=(u[1]-UY)/5;if(Math.hypot(x-SPX,y-SPY)*5>1
 addFind(x,y);$("fco").value="";$("fmsg").textContent="Guardado en esas coordenadas."};
 
 </script>
+<script>if("serviceWorker" in navigator&&(location.protocol=="https:"||location.hostname=="localhost")){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
 </body>
 </html>

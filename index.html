@@ -91,6 +91,13 @@ details.sp>summary .bar{margin-top:4px}.bar i{height:8px;border-radius:4px}
 .tabs .chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 5px;font-size:.74rem}
 .tabs .chip svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .gal img{height:60px;border-radius:8px}
+.rec{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.rec:first-of-type{border-top:0}
+.rh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.rn{font:italic 700 1rem Fraunces,Georgia,serif}.rsc{font-size:.78rem;color:var(--bark);font-weight:600;white-space:nowrap}
+.rm{font-size:.82rem;margin:2px 0}
+.rbars{display:grid;gap:2px;margin:6px 0 1px}.rb2{font-size:.62rem;text-align:center;border-radius:3px;padding:3px 0;font-weight:600}.rb2.bst{outline:2px solid var(--amber)}
+.rbl{display:grid;gap:2px;font-size:.55rem;color:var(--mute);text-align:center}
+.ra{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.rcd{margin-top:6px}
 </style>
 </head>
 <body>
@@ -516,5 +523,54 @@ addFind(x,y);$("fco").value="";$("fmsg").textContent="Guardado en esas coordenad
 
 </script>
 <script>if("serviceWorker" in navigator&&(location.protocol=="https:"||location.hostname=="localhost")){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
+<script>/* === Recomendaciones del tiempo: qué buscar en los próximos días === */
+(function(){
+var host=document.createElement("div");host.id="wxr";var vw=$("vwx");vw.insertBefore(host,vw.firstChild);
+var NDAYS=10;
+function recs(){
+ if(!WX)return null;var ti=WX.d.indexOf(td());if(ti<0)return null;var n=WX.d.length,end=Math.min(n-1,ti+NDAYS-1),out=[];
+ for(var i=0;i<S.length;i++){var best=null;
+  Object.keys(W[i]).forEach(function(k){var w=W[i][k];if(w<30)return;var alt=HA[k]||900,wf=.6+.4*w/100;
+   for(var j=ti;j<=end;j++){var s=sc(i,k,alt,j);if(!s)continue;var c=s.F*wf;if(!best||c>best.c)best={i:i,k:k,alt:alt,j:j,s:s,c:c}}});
+  if(best)out.push(best)}
+ out.sort(function(a,b){return b.c-a.c});return{ti:ti,end:end,list:out.slice(0,3)}}
+function hn(k){return k=="pa"?"prados y claros":H[k][0].toLowerCase()}
+function why(r){var s=r.s,P=WP[r.i],t=[];
+ t.push("lluvia clave "+s.trig.toFixed(0)+" mm (hacen falta ~"+s.need+")");
+ t.push("temperatura media "+s.tm.toFixed(0)+" \u00b0C (ideal "+s.tr[0]+"\u2013"+s.tr[1]+")");
+ if(s.mn<P[7])t.push("helada que frena la salida");
+ if(s.mf<1)t.push("fuera del pico de temporada");return t.join("; ")}
+function render_(){
+ var h=$("wxr");if(!WX){h.innerHTML="<div class=card><b>Qu\u00e9 buscar en los pr\u00f3ximos d\u00edas</b><p class=leg>Cuando se carguen los datos del tiempo, aqu\u00ed aparecer\u00e1n las tres setas m\u00e1s recomendadas.</p></div>";return}
+ var R=recs();if(!R){h.innerHTML="<div class=card><b>Qu\u00e9 buscar en los pr\u00f3ximos d\u00edas</b><p class=leg>Los datos del tiempo no incluyen hoy. Pulsa \u00abActualizar ahora\u00bb.</p></div>";return}
+ var o="<div class=card><b>Qu\u00e9 buscar en los pr\u00f3ximos d\u00edas</b><p class=leg style='margin:2px 0 6px'>Las tres setas con mejores condiciones (lluvia, temperatura y temporada) en los pr\u00f3ximos "+(R.end-R.ti+1)+" d\u00edas.</p>";
+ if(!R.list.length||R.list[0].c<25)o+="<p class=leg><b>Ahora no hay condiciones claramente buenas.</b> Estas son las menos malas:</p>";
+ R.list.forEach(function(r,q){
+  var nm=S[r.i][0].split(" (")[0],bars="",lab="";
+  for(var j=R.ti;j<=R.end;j++){var s=sc(r.i,r.k,r.alt,j),F=s?s.F:null,x=new Date(WX.d[j]+"T12:00:00");
+   bars+="<div class='rb2"+(j==r.j?" bst":"")+"' style='background:"+(F==null?"transparent":ramp(F/100))+";color:"+(F>55?"#fff":"#111")+"'>"+(F==null?"\u2013":F)+"</div>";
+   lab+="<span>"+WD[x.getDay()][0].toUpperCase()+x.getDate()+"</span>"}
+  o+="<div class=rec data-i='"+r.i+"'><div class=rh><b class=rn>"+(q+1)+". "+nm+"</b><span class=rsc>"+Math.round(r.s.F)+"/100 \u00b7 "+dl(WX.d[r.j])+"</span></div>"
+   +"<div class=rm>Mejor d\u00eda: <b>"+dl(WX.d[r.j])+"</b> ("+lab_(r.s.F)+") \u00b7 en "+hn(r.k)+", ~"+r.alt+" m</div><div class=rm>"+why(r)+".</div>"
+   +"<div class=rbars style='grid-template-columns:repeat("+(R.end-R.ti+1)+",1fr)'>"+bars+"</div><div class=rbl style='grid-template-columns:repeat("+(R.end-R.ti+1)+",1fr)'>"+lab+"</div>"
+   +"<div class=ra><button class=chip data-a=map data-i='"+r.i+"' data-k='"+r.k+"' data-j='"+r.j+"'>D\u00f3nde aparece (mapa)</button><button class=chip data-a=card data-i='"+r.i+"'>Ver ficha</button><button class=chip data-a=days data-i='"+r.i+"' data-k='"+r.k+"' data-alt='"+r.alt+"'>Ver los d\u00edas</button></div><div class=rcd id='rcd"+r.i+"'></div></div>"});
+ h.innerHTML=o+"</div>"}
+function lab_(F){return F>=70?"muy buen d\u00eda":F>=45?"buen d\u00eda":F>=25?"flojo":"poco probable"}
+function cardClone(i){
+ var pa=$("all").checked,pq=$("q").value,ph=hab;$("all").checked=true;$("q").value="";hab="";render();
+ var main=S[i][0].split(" (")[0],full=S[i][0],sci=S[i][1].split(" /")[0],found=null;Array.prototype.forEach.call($("list").children,function(d){var n=d.querySelector&&d.querySelector(".nm");if(!n)return;var t=n.textContent.trim();if(t!==full&&t!==main)return;var s=d.querySelector("summary");if(!s||s.textContent.indexOf(sci)<0)return;found=d});
+ var c=found?found.cloneNode(true):null;$("all").checked=pa;$("q").value=pq;hab=ph;render();
+ if(c){c.open=true;var g=c.querySelector(".go");if(g)g.onclick=function(){goMap(i)}}return c}
+function goMap(i,k,j){rs.value=String(i);st.vx=SPX;st.vy=SPY;$("rad").selectedIndex=3;$("rinfo").innerHTML="";
+ if(j!=null&&WX){var mo=+WX.d[+j].slice(5,7)-1;if(+sel.value!=mo){sel.value=String(mo);if(sel.onchange)sel.onchange()}}
+ $("im").checked=false;tab(2);window.scrollTo(0,0)}
+host.addEventListener("click",function(e){var b=e.target;if(!b.dataset||!b.dataset.a)return;var i=+b.dataset.i;
+ if(b.dataset.a=="map")goMap(i,b.dataset.k,b.dataset.j);
+ else if(b.dataset.a=="days"){$("ws").value=String(i);wxHab();$("wh").value=b.dataset.k;$("wa").value=b.dataset.alt;wxRender();var t=$("wxo");if(t.scrollIntoView)t.scrollIntoView({behavior:"smooth",block:"start"})}
+ else if(b.dataset.a=="card"){var t=$("rcd"+i);if(t.firstChild){t.innerHTML="";b.textContent="Ver ficha";return}var c=cardClone(i);if(c){t.appendChild(c);b.textContent="Ocultar ficha"}}});
+window._cc=cardClone;var _wr=wxRender;wxRender=function(){_wr();render_()};
+render_();
+})();
+</script>
 </body>
 </html>
